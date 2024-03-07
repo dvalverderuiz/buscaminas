@@ -28,13 +28,10 @@ class buscaminas:
             self.buttons[bomba].es_bomba = True
 
     def verificar_bomba(self, row, col):
-        # Revisar funcion de verificar <- pasar lista de bombas para posterior sustitución por fondo rojo y asterisco.
-        if (row, col) in self.buttons and self.buttons[(row, col)].es_bomba:
-            for self.buttons in self.buttons[(row, col)]:
-                self.buttons.config(text='*', bg="red")
-
-
+        # Revisar funcion de verificar <- que al presionar una mina, todas se muestren.
+        if self.buttons[(row, col)].es_bomba:
             print("Has encontrado una bomba en la fila", row, "y la columna", col)
+            self.buttons[(row, col)].config(text='*', bg="red")
         else:
             print("No es una bomba en la fila", row, "y la columna", col)
 
