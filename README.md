@@ -3,7 +3,7 @@
 PROYECTO BUSCAMINAS - David Valverde | Miquel Burguera
 
 **Tareas**: 
-  1 [**TERMINADA**]. Arreglar funcionamiento de la funcion [*verificar_bomba*]:
+  1. [**TERMINADA**]. Arreglar funcionamiento de la funcion [*verificar_bomba*]:
      - Que al tocar una mina todas se muestren todas.
      - Investigar como seleccionar todos lo valores de un diccionario -> "*self.buttons = {}*" 
 
