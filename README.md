@@ -2,15 +2,16 @@
 
 PROYECTO BUSCAMINAS - David Valverde | Miquel Burguera
 
-Tareas: 
-  1. Arreglar funcionamiento de la funcion [verificar_bomba]:
-     - Que al tocar una mina todas se muestren.
-     - Investigar como seleccionar todos lo valores de una lista -> "self.buttons = {}" 
+**Tareas**: 
+  1 [**TERMINADA**]. Arreglar funcionamiento de la funcion [*verificar_bomba*]:
+     - Que al tocar una mina todas se muestren todas.
+     - Investigar como seleccionar todos lo valores de un diccionario -> "*self.buttons = {}*" 
 
-  2. Investigar sobre como ha de ser la expansion del tablero a la hora de haber seleccionado una casilla y que no haya bomba.
-  3. Empezar con las funciones 
+  2. Investigar sobre como ha de ser la expansion del tablero a la hora de haber seleccionado una casilla y que no haya bomba. << En la misma funcion *verificar_bomba*, apartado '*else*'.
+  3. Investigar para funcion de conteo de bombas cercanas a la casilla pulsada. << En la misma funcion *verificar_bomba*, apartado '*else*'.
 
+------------
 
-
-Parte de errores:
-  1. En la funcion [verificar_bomba] -> los tipos booleanos no disponen de atributo .config (revisar)
+**Parte**:
+  1. En la funcion [*verificar_bomba*] -> los tipos booleanos no disponen de atributo .config (revisar)
+  2. Función *verificar_bomba* arreglada y añadida al documento principal.
