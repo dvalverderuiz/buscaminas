@@ -17,14 +17,21 @@ class Buscaminas:
             for col in range(self.cols):
                 button = tk.Button(self.ventana, text='', width=2, height=1)
                 button.grid(row=row, column=col)
-                button.config(command=lambda r=row, c=col: self.verificar_bomba(r, c))
+                #button.config(command=lambda r=row, c=col: self.verificar_bomba(r, c))
+                button.bind('<Button-1>', lambda event, r=row, c=col: self.verificar_bomba(r, c))
+                button.bind('<Button-3>', lambda event, r=row, c=col: self.marcar_bomba(event, r, c))
                 self.buttons[(row, col)] = button
-
+                
+    
+    
     def random_bombas(self):
         bombas = random.sample(list(self.buttons.keys()), self.nbombas)
         for bomba in bombas:
             self.bombas.add(bomba)
-
+        print(self.buttons)
+        print(bomba)
+        print(self.bombas)
+        
     def verificar_bomba(self, row, col):
         if (row, col) in self.bombas:
             for position, button in self.buttons.items():
@@ -33,6 +40,13 @@ class Buscaminas:
         else:
             self.buttons[(row, col)].config(text='', bg="white")
 
+    def marcar_bomba(self, event, row, col):
+        if self.buttons[(row, col)]['text'] == '':
+            self.buttons[(row, col)]['text'] = 'B'
+        elif self.buttons[(row, col)]['text'] == 'B':
+            self.buttons[(row, col)]['text'] = ''
+        return "break"
+
 
 
 def main():
@@ -40,7 +54,7 @@ def main():
     root.title("Tablero de Buscaminas")
     estado = True
     def configurar_eleccion(opcion):
-        global eleccion
+        #global eleccion
         eleccion = opcion
         verificar_nivel(eleccion)
     def verificar_nivel(eleccion):
