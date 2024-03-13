@@ -162,7 +162,10 @@ def main():
                     print("¡Por favor, ingrese un número entero válido!")
                 
                 # Control de errores: Campo personalizado
-                if col and row < 10:
+                if col or row or nbombas == str():
+                    messagebox.showwarning(title="Advertencia", message="Los campos han de ser rellenados con números enteros, no con letras.")
+                    return "break"
+                elif col and row < 10:
                     messagebox.showwarning(title="Advertencia", message="Dimensiones mínimas: 10x10")
                     return "break"
                 elif col or row or nbombas == None:
@@ -177,7 +180,7 @@ def main():
 
             nueva_ventana.mainloop()
         else:
-            print("Modo de juego no encontrado")
+            print("")
 
 
 
@@ -189,19 +192,19 @@ def main():
 
     boton_facil = tk.Button(root, text="Fácil", command=lambda: configurar_eleccion("facil"))
     boton_facil.config(cursor="hand2", bg="goldenrod", relief="flat", width=8, height=1, font=("Calisto MT", 12, "bold"))
-    boton_facil.place(x="55", y="0")
+    boton_facil.place(x="55", y="20")
 
     boton_mediano = tk.Button(root, text="Medio", command=lambda: configurar_eleccion("medio"))
     boton_mediano.config(cursor="hand2", bg="goldenrod", relief="flat", width=8, height=1, font=("Calisto MT", 12, "bold"))
-    boton_mediano.place(x="55", y="40")
+    boton_mediano.place(x="55", y="60")
 
     boton_dificil = tk.Button(root, text="Dificil", command=lambda: configurar_eleccion("dificil"))
     boton_dificil.config(cursor="hand2", bg="goldenrod", relief="flat", width=8, height=1, font=("Calisto MT", 12, "bold"))
-    boton_dificil.place(x="55", y="80")
+    boton_dificil.place(x="55", y="100")
     
     boton_personalizado = tk.Button(root, text="Personalizado", command=lambda: configurar_eleccion("personalizado"))
     boton_personalizado.config(cursor="hand2", bg="goldenrod", relief="flat", width=12, height=1, font=("Calisto MT", 12, "bold"))
-    boton_personalizado.place(x="35", y="120")
+    boton_personalizado.place(x="35", y="140")
     
     root.mainloop()
 
