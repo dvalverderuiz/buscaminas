@@ -18,7 +18,7 @@ class Buscaminas:
         self.contador()
     
     def widgets(self):
-        self.contador()
+        
         
         for row in range(self.rows):
             for col in range(self.cols):
@@ -84,12 +84,14 @@ class Buscaminas:
     
     
     def actualizar_tiempo(self):
-        self.s += 1  
+        tiempo = f"Tiempo: {self.m:02d}:{self.s:02d}"
+        self.label_tiempo.config(text=tiempo)
+        self.s += 1
         if self.s == 60:
             self.s = 0
             self.m += 1
-        tiempo = f"Tiempo: {self.m:02d}:{self.s:02d}"    
-        self.label_tiempo.config(text=tiempo)
+            
+        
         
         self.ventana.after(1000, self.actualizar_tiempo)
 
@@ -133,8 +135,6 @@ def main():
             row_label = tk.Label(nueva_ventana, text="Número de filas:")
             row_label.place(x="90", y="0")
             row1.pack()
-
-
 
             col1 = tk.Entry(nueva_ventana)
             col1.insert(0, "")
