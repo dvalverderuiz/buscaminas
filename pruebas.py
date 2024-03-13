@@ -149,6 +149,7 @@ def main():
             nbombas1.pack()
 
             def obtener_valores():
+                
                 nbombas = nbombas1.get()
                 banderas = nbombas
                 col = col1.get()
@@ -158,6 +159,7 @@ def main():
                     row = int(row)
                     banderas = int(banderas)
                     nbombas = int(nbombas)
+                    maximo_bombas = (col * row) / 3
                 except ValueError:
                     print("¡Por favor, ingrese un número entero válido!")
                 
@@ -170,6 +172,9 @@ def main():
                     return "break"
                 elif col is None or row is None or nbombas is None:
                     messagebox.showwarning(title="Advertencia", message="Complete todos los campos para jugar")
+                    return "break"
+                elif nbombas > maximo_bombas:
+                    messagebox.showwarning(title="Advertencia", message=f"Demasiadas bombas para el tablero seleccionado, solo se permiten una tercera parte del total de casillas. \n\n Max: {maximo_bombas:.0f}")
                     return "break"
                 else:
                     nueva_ventana.destroy()
