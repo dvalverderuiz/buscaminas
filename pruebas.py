@@ -71,7 +71,7 @@ class Buscaminas:
         self.label_tiempo = tk.Label(self.ventana, text='', width=10, height=2, bg="white", fg="black")
         self.label_tiempo.grid(row=self.rows, columnspan=2)
         self.label_banderas = tk.Label(self.ventana, text='', width=20, height=2, bg="white", fg="black")
-
+        
 
         self.label_banderas.grid(row=self.rows, columnspan=20)
         
@@ -162,13 +162,13 @@ def main():
                     print("¡Por favor, ingrese un número entero válido!")
                 
                 # Control de errores: Campo personalizado
-                if col or row or nbombas == str():
+                if not isinstance(col, int) or not isinstance(row, int) or not isinstance(nbombas, int):
                     messagebox.showwarning(title="Advertencia", message="Los campos han de ser rellenados con números enteros, no con letras.")
                     return "break"
                 elif col and row < 10:
                     messagebox.showwarning(title="Advertencia", message="Dimensiones mínimas: 10x10")
                     return "break"
-                elif col or row or nbombas == None:
+                elif col is None or row is None or nbombas is None:
                     messagebox.showwarning(title="Advertencia", message="Complete todos los campos para jugar")
                     return "break"
                 else:
