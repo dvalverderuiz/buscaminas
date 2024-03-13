@@ -35,20 +35,20 @@ class Buscaminas:
         for bomba in bombas:
             self.bombas.add(bomba)
         
-        print(self.buttons)
-        print(self.bombas)
-        
     def verificar_bomba(self, row, col):
-        if (row, col) in self.bombas:
+        if self.buttons[(row, col)]['text'] == 'B':
+            return "break"
+        elif (row, col) in self.bombas:
             for position, button in self.buttons.items():
                 if position in self.bombas:
                     button.config(text='*', bg="tomato")
-                    
         else:
             self.buttons[(row, col)].config(text='', bg="bisque")
 
     def marcar_bomba(self, row, col):
-        if self.buttons[(row, col)]['text'] == 'B':
+        if self.buttons[(row, col)]['bg'] == "bisque":
+            return "break"
+        elif self.buttons[(row, col)]['text'] == 'B':
             self.buttons[(row, col)]['text'] = ''
             self.banderas = self.banderas + 1
             self.actualizar_banderas()
@@ -86,7 +86,7 @@ class Buscaminas:
             self.s = 0
             self.m += 1
         
-        tiempo = f"Tiempo: {self.m}:{self.s}"    
+        tiempo = f"Tiempo: {self.m:02d}:{self.s:02d}"    
         self.label_tiempo.config(text=tiempo)
         
         self.ventana.after(1000, self.actualizar_tiempo)
