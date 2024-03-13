@@ -35,21 +35,31 @@ class Buscaminas:
         print(self.bombas)
         
     def verificar_bomba(self, row, col):
-        if (row, col) in self.bombas:
+        if self.buttons[(row, col)]['text'] == 'B':
+            return "break"
+        elif (row, col) in self.bombas:
             for position, button in self.buttons.items():
                 if position in self.bombas:
                     button.config(text='*', bg="tomato")
-                    
         else:
             self.buttons[(row, col)].config(text='', bg="bisque")
 
+    
     def marcar_bomba(self, row, col):
-        if self.buttons[(row, col)]['text'] == '':
-            self.buttons[(row, col)]['text'] = 'B'
+        if self.buttons[(row, col)]['bg'] == "bisque":
+            return "break"
         elif self.buttons[(row, col)]['text'] == 'B':
             self.buttons[(row, col)]['text'] = ''
+            self.banderas = self.banderas + 1
+            self.actualizar_banderas()
+        elif self.banderas < 1:
+            return "break"
+        elif self.buttons[(row, col)]['text'] == '':
+            self.buttons[(row, col)]['text'] = 'B'
+            self.banderas = self.banderas - 1
+            self.actualizar_banderas()
+        
         return "break"
-
 
 
 def main():
