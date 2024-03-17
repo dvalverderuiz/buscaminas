@@ -6,6 +6,7 @@ import time
 
 class Buscaminas:
     def __init__(self, ventana, rows, cols, nbombas, banderas):
+        estado = True
         self.ventana = ventana
         self.rows = rows
         self.cols = cols
@@ -13,13 +14,12 @@ class Buscaminas:
         self.nbombas = nbombas
         self.buttons = {}
         self.bombas = set()
+        self.estado = estado
         self.widgets()
         self.random_bombas()
         self.contador()
-    
-    def widgets(self):
         
-        
+    def widgets(self):        
         for row in range(self.rows):
             for col in range(self.cols):
                 button = tk.Button(self.ventana, text='', width=5, height=2, bg="pale green")
@@ -28,9 +28,7 @@ class Buscaminas:
                 button.bind('<Button-1>', lambda event, r=row, c=col: self.verificar_bomba(r, c))
                 button.bind('<Button-3>', lambda event, r=row, c=col: self.marcar_bomba(r, c))
                 self.buttons[(row, col)] = button
-                
-    
-    
+                    
     def random_bombas(self):
         bombas = random.sample(list(self.buttons.keys()), self.nbombas)
         for bomba in bombas:
@@ -40,9 +38,10 @@ class Buscaminas:
         if self.buttons[(row, col)]['text'] == 'B':
             return "break"
         elif (row, col) in self.bombas:
+            self.estado = False
             for position, button in self.buttons.items():
                 if position in self.bombas:
-                    button.config(text='*', bg="tomato")
+                    button.config(text='*', bg="tomato")           
         else:
             self.buttons[(row, col)].config(text='', bg="bisque")
 
@@ -66,12 +65,10 @@ class Buscaminas:
     def contador(self):
         self.s = 0
         self.m = 0
-        
 
         self.label_tiempo = tk.Label(self.ventana, text='', width=10, height=2, bg="white", fg="black")
         self.label_tiempo.grid(row=self.rows, columnspan=2)
-        self.label_banderas = tk.Label(self.ventana, text='', width=20, height=2, bg="white", fg="black")
-        
+        self.label_banderas = tk.Label(self.ventana, text='', width=20, height=2, bg="white", fg="black")   
 
         self.label_banderas.grid(row=self.rows, columnspan=20)
         
@@ -90,12 +87,34 @@ class Buscaminas:
         if self.s == 60:
             self.s = 0
             self.m += 1
-            
-        
-        
+        elif self.estado == False:
+            for i in range(1):
+                self.final_juego(self.m, self.s)
+                self.estado = True
         self.ventana.after(1000, self.actualizar_tiempo)
 
-    
+    def final_juego(self, m, s):
+        self.ventana.destroy()
+        tiempo = f"Tiempo usado: {m:02d}:{s:02d}"
+        total_casillas = self.cols * self.rows
+
+        # Añadir funcion de contar las casillas beige. Para mostrar en estadisticas.
+        
+        print("Fin del juego")
+        ventana_estadisticas = tk.Tk()
+        ventana_estadisticas.title("Estadisticas")
+        ventana_estadisticas.geometry("250x500")
+        titulo = tk.Label(ventana_estadisticas, text="\nFIN DEL JUEGO \n\n\n ESTADISTICAS:\n ")
+        titulo.pack()
+        tiempo_stat = tk.Label(ventana_estadisticas, text=tiempo)
+        tiempo_stat.pack()
+        total_casillas_stat = tk.Label(ventana_estadisticas, text=f"Tamaño del tablero: {total_casillas} casillas")
+        total_casillas_stat.pack()
+        casillas_pulsadas_stat = tk.Label(ventana_estadisticas, text="")
+        casillas_pulsadas_stat.pack()
+        #self.ventana.destroy()
+
+
 
 def main():
     root = tk.Tk()
@@ -110,22 +129,21 @@ def main():
             row = 10
             col = 10
             nbombas = 10
-            banderas = 10 
+            banderas = nbombas 
             enviar_valores(row, col, nbombas, banderas)
         elif eleccion == "medio":
             row = 15
             col = 15
             nbombas = 15
-            banderas = 15
+            banderas = nbombas 
             enviar_valores(row, col, nbombas, banderas)         
         elif eleccion == "dificil":
             row = 20
             col = 20
             nbombas = 20
-            banderas = 20
+            banderas = nbombas 
             enviar_valores(row, col, nbombas, banderas)
         elif eleccion == "personalizado":
-            #root.destroy()
             nueva_ventana = tk.Toplevel()
             nueva_ventana.title("Buscaminas personalizado")
             nueva_ventana.geometry("500x250")
@@ -149,37 +167,37 @@ def main():
             nbombas1.pack()
 
             def obtener_valores():
-                
                 nbombas = nbombas1.get()
                 banderas = nbombas
                 col = col1.get()
                 row = row1.get()
+                
                 try:
                     col = int(col)
                     row = int(row)
                     banderas = int(banderas)
                     nbombas = int(nbombas)
-                    maximo_bombas = (col * row) / 3
+                    maximo_bombas = (col * row) / 3 
                 except ValueError:
-                    print("¡Por favor, ingrese un número entero válido!")
-                
+                    print("Error")
+
                 # Control de errores: Campo personalizado
                 if not isinstance(col, int) or not isinstance(row, int) or not isinstance(nbombas, int):
-                    messagebox.showwarning(title="Advertencia", message="Los campos han de ser rellenados con números enteros, no con letras.")
+                    messagebox.showwarning(title="Advertencia", message="Los campos no pueden estar vacios ni contener letras.")
                     return "break"
                 elif col and row < 10:
                     messagebox.showwarning(title="Advertencia", message="Dimensiones mínimas: 10x10")
                     return "break"
-                elif col is None or row is None or nbombas is None:
-                    messagebox.showwarning(title="Advertencia", message="Complete todos los campos para jugar")
-                    return "break"
                 elif nbombas > maximo_bombas:
-                    messagebox.showwarning(title="Advertencia", message=f"Demasiadas bombas para el tablero seleccionado, solo se permiten una tercera parte del total de casillas. \n\n Max: {maximo_bombas:.0f}")
+                    messagebox.showwarning(title="Advertencia", message=f"Demasiadas bombas para el tablero seleccionado, solo se permiten una tercera parte del total de casillas. \n\n Max: {maximo_bombas:.0f} bombas")
+                    return "break"
+                elif col > 42 or row > 24:
+                    messagebox.showwarning(title="Advertencia", message=f"Medidas maximas: 24 filas x 42 columnas")
                     return "break"
                 else:
                     nueva_ventana.destroy()
                     enviar_valores(row, col, nbombas, banderas)
-            
+
             boton_confirmar = tk.Button(nueva_ventana, text="Confirmar", command=obtener_valores)
             boton_confirmar.pack()
 
@@ -187,11 +205,10 @@ def main():
         else:
             print("")
 
-
-
     def enviar_valores(row, col, nbombas, banderas):
         Buscaminas(root, row, col, nbombas, banderas)
 
+    
 
 
 
