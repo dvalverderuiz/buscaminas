@@ -6,6 +6,7 @@ import time
 
 class Buscaminas:
     def __init__(self, ventana, rows, cols, nbombas, banderas):
+        self.casillas_desbloqueadas = 0
         estado = True
         self.ventana = ventana
         self.rows = rows
@@ -28,7 +29,7 @@ class Buscaminas:
                 button.bind('<Button-1>', lambda event, r=row, c=col: self.verificar_bomba(r, c))
                 button.bind('<Button-3>', lambda event, r=row, c=col: self.marcar_bomba(r, c))
                 self.buttons[(row, col)] = button
-                    
+                
     def random_bombas(self):
         bombas = random.sample(list(self.buttons.keys()), self.nbombas)
         for bomba in bombas:
@@ -41,10 +42,14 @@ class Buscaminas:
             self.estado = False
             for position, button in self.buttons.items():
                 if position in self.bombas:
-                    button.config(text='*', bg="tomato")           
+                    button.config(text='*', bg="tomato")         
         else:
+            self.casillas_desbloqueadas = self.casillas_desbloqueadas + 1
             self.buttons[(row, col)].config(text='', bg="bisque")
-
+            
+    
+    
+    
     def marcar_bomba(self, row, col):
         if self.buttons[(row, col)]['bg'] == "bisque":
             return "break"
@@ -89,17 +94,20 @@ class Buscaminas:
             self.m += 1
         elif self.estado == False:
             for i in range(1):
-                self.final_juego(self.m, self.s)
+                self.final_juego(self.s, self.m, self.casillas_desbloqueadas) 
                 self.estado = True
         self.ventana.after(1000, self.actualizar_tiempo)
 
-    def final_juego(self, m, s):
+
+    def final_juego(self, s, m, casillas_desbloqueadas):
         self.ventana.destroy()
-        tiempo = f"Tiempo usado: {m:02d}:{s:02d}"
+        tiempo = f"Tiempo: {self.m:02d}:{self.s:02d}"
         total_casillas = self.cols * self.rows
 
         # Añadir funcion de contar las casillas beige. Para mostrar en estadisticas.
         
+
+
         print("Fin del juego")
         ventana_estadisticas = tk.Tk()
         ventana_estadisticas.title("Estadisticas")
@@ -110,7 +118,7 @@ class Buscaminas:
         tiempo_stat.pack()
         total_casillas_stat = tk.Label(ventana_estadisticas, text=f"Tamaño del tablero: {total_casillas} casillas")
         total_casillas_stat.pack()
-        casillas_pulsadas_stat = tk.Label(ventana_estadisticas, text="")
+        casillas_pulsadas_stat = tk.Label(ventana_estadisticas, text=f"Casillas desbloqueadas: {self.casillas_desbloqueadas}")
         casillas_pulsadas_stat.pack()
         #self.ventana.destroy()
 
