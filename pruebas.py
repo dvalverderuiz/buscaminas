@@ -63,7 +63,6 @@ class Buscaminas:
             self.buttons[(row, col)]['text'] = 'B'
             self.banderas = self.banderas - 1
             self.actualizar_banderas()
-        
         return "break"
     
        
@@ -73,8 +72,8 @@ class Buscaminas:
 
         self.label_tiempo = tk.Label(self.ventana, text='', width=10, height=2, bg="white", fg="black")
         self.label_tiempo.grid(row=self.rows, columnspan=2)
+        
         self.label_banderas = tk.Label(self.ventana, text='', width=20, height=2, bg="white", fg="black")   
-
         self.label_banderas.grid(row=self.rows, columnspan=20)
         
         self.actualizar_banderas()
@@ -100,15 +99,12 @@ class Buscaminas:
 
 
     def final_juego(self, s, m, casillas_desbloqueadas):
-        self.ventana.destroy()
+        
         tiempo = f"Tiempo: {self.m:02d}:{self.s:02d}"
         total_casillas = self.cols * self.rows
 
-        # Añadir funcion de contar las casillas beige. Para mostrar en estadisticas.
         
-
-
-        print("Fin del juego")
+        
         ventana_estadisticas = tk.Tk()
         ventana_estadisticas.title("Estadisticas")
         ventana_estadisticas.geometry("250x500")
@@ -120,8 +116,8 @@ class Buscaminas:
         total_casillas_stat.pack()
         casillas_pulsadas_stat = tk.Label(ventana_estadisticas, text=f"Casillas desbloqueadas: {self.casillas_desbloqueadas}")
         casillas_pulsadas_stat.pack()
-        #self.ventana.destroy()
-
+        
+        self.ventana.destroy()
 
 
 def main():
@@ -187,7 +183,8 @@ def main():
                     nbombas = int(nbombas)
                     maximo_bombas = (col * row) / 3 
                 except ValueError:
-                    print("Error")
+                    print("No se ha podido convertir a INT")
+                    print(col, row, banderas, nbombas, maximo_bombas)
 
                 # Control de errores: Campo personalizado
                 if not isinstance(col, int) or not isinstance(row, int) or not isinstance(nbombas, int):
