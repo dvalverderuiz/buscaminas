@@ -7,7 +7,6 @@ import time
 class Buscaminas:
     def __init__(self, ventana, rows, cols, nbombas, banderas):
         self.casillas_desbloqueadas = 0
-        estado = True
         self.ventana = ventana
         self.rows = rows
         self.cols = cols
@@ -15,7 +14,7 @@ class Buscaminas:
         self.nbombas = nbombas
         self.buttons = {}
         self.bombas = set()
-        self.estado = estado
+        self.estado = True
         self.widgets()
         self.random_bombas()
         self.contador()
@@ -42,12 +41,26 @@ class Buscaminas:
             self.estado = False
             for position, button in self.buttons.items():
                 if position in self.bombas:
-                    button.config(text='*', bg="tomato")         
+                    button.config(text='*', bg="tomato")        
         else:
-            self.casillas_desbloqueadas = self.casillas_desbloqueadas + 1
-            self.buttons[(row, col)].config(text='', bg="bisque")
             
-    
+            bombas_cercanas = self.contar_bombas_cercanas(row, col)        
+            if bombas_cercanas == 0:
+                for r in range(row - 1, row + 2):
+                    for c in range(col - 1, col + 2):
+                        if r!= row or c != col:
+                            self.buttons[(row, col)].config(bg="bisque")
+                            self.verificar_bomba(r, c)                       
+            self.casillas_desbloqueadas = self.casillas_desbloqueadas + 1
+            self.buttons[(row, col)].config(text=bombas_cercanas, bg="bisque")
+            
+    def contar_bombas_cercanas(self, row, col):
+        count = 0
+        for r in range(row - 1, row + 2):
+                for c in range(col - 1, col + 2):
+                    if (r, c) in self.bombas:
+                        count+=1
+        return count
     
     
     def marcar_bomba(self, row, col):
@@ -102,9 +115,6 @@ class Buscaminas:
         
         tiempo = f"Tiempo: {self.m:02d}:{self.s:02d}"
         total_casillas = self.cols * self.rows
-
-        
-        
         ventana_estadisticas = tk.Tk()
         ventana_estadisticas.title("Estadisticas")
         ventana_estadisticas.geometry("250x500")
@@ -117,7 +127,7 @@ class Buscaminas:
         casillas_pulsadas_stat = tk.Label(ventana_estadisticas, text=f"Casillas desbloqueadas: {self.casillas_desbloqueadas}")
         casillas_pulsadas_stat.pack()
         
-        self.ventana.destroy()
+        #self.ventana.destroy()
 
 
 def main():
@@ -133,18 +143,6 @@ def main():
             row = 10
             col = 10
             nbombas = 10
-            banderas = nbombas 
-            enviar_valores(row, col, nbombas, banderas)
-        elif eleccion == "medio":
-            row = 15
-            col = 15
-            nbombas = 15
-            banderas = nbombas 
-            enviar_valores(row, col, nbombas, banderas)         
-        elif eleccion == "dificil":
-            row = 20
-            col = 20
-            nbombas = 20
             banderas = nbombas 
             enviar_valores(row, col, nbombas, banderas)
         elif eleccion == "personalizado":
@@ -213,25 +211,13 @@ def main():
     def enviar_valores(row, col, nbombas, banderas):
         Buscaminas(root, row, col, nbombas, banderas)
 
-    
-
-
-
     boton_facil = tk.Button(root, text="Fácil", command=lambda: configurar_eleccion("facil"))
     boton_facil.config(cursor="hand2", bg="goldenrod", relief="flat", width=8, height=1, font=("Calisto MT", 12, "bold"))
-    boton_facil.place(x="55", y="20")
+    boton_facil.place(x="55", y="55")
 
-    boton_mediano = tk.Button(root, text="Medio", command=lambda: configurar_eleccion("medio"))
-    boton_mediano.config(cursor="hand2", bg="goldenrod", relief="flat", width=8, height=1, font=("Calisto MT", 12, "bold"))
-    boton_mediano.place(x="55", y="60")
-
-    boton_dificil = tk.Button(root, text="Dificil", command=lambda: configurar_eleccion("dificil"))
-    boton_dificil.config(cursor="hand2", bg="goldenrod", relief="flat", width=8, height=1, font=("Calisto MT", 12, "bold"))
-    boton_dificil.place(x="55", y="100")
-    
     boton_personalizado = tk.Button(root, text="Personalizado", command=lambda: configurar_eleccion("personalizado"))
     boton_personalizado.config(cursor="hand2", bg="goldenrod", relief="flat", width=12, height=1, font=("Calisto MT", 12, "bold"))
-    boton_personalizado.place(x="35", y="140")
+    boton_personalizado.place(x="35", y="100")
     
     root.mainloop()
 
