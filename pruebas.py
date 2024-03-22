@@ -42,27 +42,25 @@ class Buscaminas:
             for position, button in self.buttons.items():
                 if position in self.bombas:
                     button.config(text='*', bg="tomato")        
-        else:
-            
-            bombas_cercanas = self.contar_bombas_cercanas(row, col)        
-            if bombas_cercanas == 0:
-                for r in range(row - 1, row + 2):
-                    for c in range(col - 1, col + 2):
-                        if r!= row or c != col:
-                            self.buttons[(row, col)].config(bg="bisque")
-                            self.verificar_bomba(r, c)                       
+        else:            
+            for r in range(row - 1, row + 2):
+                for c in range(col - 1, col + 2):
+                    bombas_cercanas = self.contar_bombas_cercanas(row, col)
+                    if bombas_cercanas != 0 and r!= row or c != col:         
+                        self.buttons[(row, col)].config(bg="bisque")                       
             self.casillas_desbloqueadas = self.casillas_desbloqueadas + 1
-            self.buttons[(row, col)].config(text=bombas_cercanas, bg="bisque")
-            
+            self.buttons[(row, col)].config(text=bombas_cercanas, bg="bisque")    
+                 
     def contar_bombas_cercanas(self, row, col):
         count = 0
         for r in range(row - 1, row + 2):
                 for c in range(col - 1, col + 2):
                     if (r, c) in self.bombas:
-                        count+=1
-        return count
-    
-    
+                        count+=1                
+        if(count == 0):
+            return " "
+        else:
+            return count
     def marcar_bomba(self, row, col):
         if self.buttons[(row, col)]['bg'] == "bisque":
             return "break"
