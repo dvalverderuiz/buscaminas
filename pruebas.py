@@ -22,7 +22,7 @@ class Buscaminas:
     def widgets(self):        
         for row in range(self.rows):
             for col in range(self.cols):
-                button = tk.Button(self.ventana, text='', width=5, height=2, bg="pale green")
+                button = tk.Button(self.ventana, text='', width=5, height=2, bg="pale green", state="normal")
                 button.grid(row=row, column=col)
                 #button.config(command=lambda r=row, c=col: self.verificar_bomba(r, c))
                 button.bind('<Button-1>', lambda event, r=row, c=col: self.verificar_bomba(r, c))
@@ -34,6 +34,18 @@ class Buscaminas:
         for bomba in bombas:
             self.bombas.add(bomba)
         
+    def expandir_casillas_vacias(self, row, col):
+        for r in range(row - 1, row + 2):
+            for c in range(col - 1, col + 2):
+                if 0 <= r < self.rows and 0 <= c < self.cols and (r, c) != (row, col) and self.buttons[(r, c)]['text'] == '':
+                    bombas_cercanas = self.contar_bombas_cercanas(r, c)
+                    self.buttons[(r, c)].config(text=bombas_cercanas, bg="bisque")
+                    self.casillas_desbloqueadas += 1
+                    if bombas_cercanas == 0:
+                        self.expandir_casillas_vacias(r, c)
+
+
+
     def verificar_bomba(self, row, col):
         if self.buttons[(row, col)]['text'] == 'B':
             return "break"
@@ -41,15 +53,16 @@ class Buscaminas:
             self.estado = False
             for position, button in self.buttons.items():
                 if position in self.bombas:
-                    button.config(text='*', bg="tomato")        
-        else:            
-            for r in range(row - 1, row + 2):
-                for c in range(col - 1, col + 2):
-                    bombas_cercanas = self.contar_bombas_cercanas(row, col)
-                    if bombas_cercanas != 0 and r!= row or c != col:         
-                        self.buttons[(row, col)].config(bg="bisque")                       
-            self.casillas_desbloqueadas = self.casillas_desbloqueadas + 1
-            self.buttons[(row, col)].config(text=bombas_cercanas, bg="bisque")    
+                    button.config(text='*', bg="tomato")
+        else:
+            bombas_cercanas = self.contar_bombas_cercanas(row, col)
+            if bombas_cercanas == 0:
+                self.expandir_casillas_vacias(row, col)
+            else:
+                self.buttons[(row, col)].config(text=bombas_cercanas, bg="bisque")
+            self.casillas_desbloqueadas += 1
+
+                
                  
     def contar_bombas_cercanas(self, row, col):
         count = 0
@@ -106,6 +119,13 @@ class Buscaminas:
             for i in range(1):
                 self.final_juego(self.s, self.m, self.casillas_desbloqueadas) 
                 self.estado = True
+                for e in range(self.rows):
+                    for f in range(self.cols):
+                        self.buttons[(e, f)]['state'] = tk.DISABLED
+                        for button in self.buttons.values():
+                            button.unbind('<Button-1>')
+                            button.unbind('<Button-3>')
+
         self.ventana.after(1000, self.actualizar_tiempo)
 
 
