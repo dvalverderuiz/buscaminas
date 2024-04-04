@@ -47,7 +47,7 @@ class Buscaminas:
                 if (row, col) in self.bombas:
                     for position, button in self.buttons.items():
                         if position in self.bombas:
-                            button.config(text='*', bg="tomato")
+                            button.config(text='💣', bg="tomato")
             
             
                     
@@ -71,13 +71,13 @@ class Buscaminas:
             return count
         
     def verificar_bomba(self, row, col):
-        if self.buttons[(row, col)]['text'] == 'B':
+        if self.buttons[(row, col)]['text'] == '🚩':
             return "break"
         elif (row, col) in self.bombas:
             self.estado = False
             for position, button in self.buttons.items():
                 if position in self.bombas:
-                    button.config(text='*', bg="tomato")
+                    button.config(text='💣', bg="tomato")
         else:
             bombas_cercanas = self.contar_bombas_cercanas(row, col)
             if bombas_cercanas == 0:
@@ -91,14 +91,14 @@ class Buscaminas:
     def marcar_bomba(self, row, col):
         if self.buttons[(row, col)]['bg'] == "bisque":
             return "break"
-        elif self.buttons[(row, col)]['text'] == 'B':
+        elif self.buttons[(row, col)]['text'] == '🚩':
             self.buttons[(row, col)]['text'] = ''
             self.banderas = self.banderas + 1
             self.actualizar_banderas()
         elif self.banderas < 1:
             return "break"
         elif self.buttons[(row, col)]['text'] == '':
-            self.buttons[(row, col)]['text'] = 'B'
+            self.buttons[(row, col)]['text'] = '🚩'
             self.banderas = self.banderas - 1
             self.actualizar_banderas()
         return "break"
