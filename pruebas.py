@@ -66,7 +66,7 @@ class Buscaminas:
 
     def verificar_bomba(self, row, col):
         
-        if self.buttons[(row, col)]['text'] == '🚩':
+        if self.buttons[(row, col)]['text'] == '🏴?':
             return "break"
         elif (row, col) in self.bombas:
             self.estado = False
@@ -101,11 +101,11 @@ class Buscaminas:
     def marcar_bomba(self, row, col):
         if self.buttons[(row, col)]['bg'] == "white":
             return "break"
-        elif self.buttons[(row, col)]['text'] == '🚩':
+        elif self.buttons[(row, col)]['text'] == '🏴?':
             self.buttons[(row, col)]['text'] = ''
             self.banderas += 1
         elif self.banderas > 0 and self.buttons[(row, col)]['text'] == '':
-            self.buttons[(row, col)]['text'] = '🚩'
+            self.buttons[(row, col)]['text'] = '🏴?'
             self.banderas -= 1
         self.actualizar_banderas()
 
