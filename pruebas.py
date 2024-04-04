@@ -3,9 +3,11 @@ from tkinter import messagebox
 import random
 import time
 
+# 0 para mapeado sin mostrar minas | 1 para mapeado con minas mostradas
 
 class Buscaminas:
-    def __init__(self, ventana, rows, cols, nbombas, banderas):
+    def __init__(self, ventana, rows, cols, nbombas, banderas, eleccion_mapeado):
+        self.eleccion_mapeado = eleccion_mapeado
         self.casillas_desbloqueadas = 0
         self.ventana = ventana
         self.rows = rows
@@ -16,9 +18,15 @@ class Buscaminas:
         self.bombas = set()
         self.estado = True
         self.widgets()
-        self.random_bombas()
+        self.mapeado()
         self.contador()
         
+    def mapeado(self):
+        if self.eleccion_mapeado == 0:
+            self.random_bombas()
+        elif self.eleccion_mapeado == 1:
+            self.random_bombas_mapeado()
+
     def widgets(self):        
         for row in range(self.rows):
             for col in range(self.cols):
@@ -28,24 +36,40 @@ class Buscaminas:
                 button.bind('<Button-1>', lambda event, r=row, c=col: self.verificar_bomba(r, c))
                 button.bind('<Button-3>', lambda event, r=row, c=col: self.marcar_bomba(r, c))
                 self.buttons[(row, col)] = button
-                
+    
+    
+    def random_bombas_mapeado(self):
+        bombas = random.sample(list(self.buttons.keys()), self.nbombas)
+        for bomba in bombas:
+            self.bombas.add(bomba)    
+        for row in range(self.rows):
+            for col in range(self.cols):
+                if (row, col) in self.bombas:
+                    for position, button in self.buttons.items():
+                        if position in self.bombas:
+                            button.config(text='*', bg="tomato")
+            
+            
+                    
+    
+    
+    
     def random_bombas(self):
         bombas = random.sample(list(self.buttons.keys()), self.nbombas)
         for bomba in bombas:
             self.bombas.add(bomba)
-        
-    def expandir_casillas_vacias(self, row, col):
+            
+    def contar_bombas_cercanas(self, row, col):
+        count = 0
         for r in range(row - 1, row + 2):
-            for c in range(col - 1, col + 2):
-                if 0 <= r < self.rows and 0 <= c < self.cols and (r, c) != (row, col) and self.buttons[(r, c)]['text'] == '':
-                    bombas_cercanas = self.contar_bombas_cercanas(r, c)
-                    self.buttons[(r, c)].config(text=bombas_cercanas, bg="bisque")
-                    self.casillas_desbloqueadas += 1
-                    if bombas_cercanas == 0:
-                        self.expandir_casillas_vacias(r, c)
-
-
-
+                for c in range(col - 1, col + 2):
+                    if (r, c) in self.bombas:
+                        count+=1                
+        if(count == 0):
+            return " "
+        else:
+            return count
+        
     def verificar_bomba(self, row, col):
         if self.buttons[(row, col)]['text'] == 'B':
             return "break"
@@ -57,23 +81,13 @@ class Buscaminas:
         else:
             bombas_cercanas = self.contar_bombas_cercanas(row, col)
             if bombas_cercanas == 0:
-                self.expandir_casillas_vacias(row, col)
+                self.expandir_casillas_vacias(row, col, bombas_cercanas)
             else:
                 self.buttons[(row, col)].config(text=bombas_cercanas, bg="bisque")
-            self.casillas_desbloqueadas += 1
-
-                
+            self.casillas_desbloqueadas += 1             
                  
-    def contar_bombas_cercanas(self, row, col):
-        count = 0
-        for r in range(row - 1, row + 2):
-                for c in range(col - 1, col + 2):
-                    if (r, c) in self.bombas:
-                        count+=1                
-        if(count == 0):
-            return " "
-        else:
-            return count
+   
+    
     def marcar_bomba(self, row, col):
         if self.buttons[(row, col)]['bg'] == "bisque":
             return "break"
@@ -161,8 +175,10 @@ def main():
             row = 10
             col = 10
             nbombas = 10
-            banderas = nbombas 
-            enviar_valores(row, col, nbombas, banderas)
+            banderas = nbombas
+            # 0 para mapeado sin mostrar minas | 1 para mapeado con minas mostradas
+            eleccion_mapeado = 0
+            enviar_valores(row, col, nbombas, banderas, eleccion_mapeado)
         elif eleccion == "personalizado":
             nueva_ventana = tk.Toplevel()
             nueva_ventana.title("Buscaminas personalizado")
@@ -191,7 +207,7 @@ def main():
                 banderas = nbombas
                 col = col1.get()
                 row = row1.get()
-                
+                eleccion_mapeado = 0
                 try:
                     col = int(col)
                     row = int(row)
@@ -217,17 +233,25 @@ def main():
                     return "break"
                 else:
                     nueva_ventana.destroy()
-                    enviar_valores(row, col, nbombas, banderas)
+                    enviar_valores(row, col, nbombas, banderas, eleccion_mapeado)
 
             boton_confirmar = tk.Button(nueva_ventana, text="Confirmar", command=obtener_valores)
             boton_confirmar.pack()
 
             nueva_ventana.mainloop()
+        elif eleccion == "mapeado":
+            row = 10
+            col = 10
+            nbombas = 10
+            banderas = nbombas
+            # 0 para mapeado sin mostrar minas | 1 para mapeado con minas mostradas
+            eleccion_mapeado = 1
+            enviar_valores(row, col, nbombas, banderas, eleccion_mapeado)
         else:
             print("")
 
-    def enviar_valores(row, col, nbombas, banderas):
-        Buscaminas(root, row, col, nbombas, banderas)
+    def enviar_valores(row, col, nbombas, banderas, eleccion_mapeado):
+        Buscaminas(root, row, col, nbombas, banderas, eleccion_mapeado)
 
     boton_facil = tk.Button(root, text="Fácil", command=lambda: configurar_eleccion("facil"))
     boton_facil.config(cursor="hand2", bg="goldenrod", relief="flat", width=8, height=1, font=("Calisto MT", 12, "bold"))
@@ -237,6 +261,9 @@ def main():
     boton_personalizado.config(cursor="hand2", bg="goldenrod", relief="flat", width=12, height=1, font=("Calisto MT", 12, "bold"))
     boton_personalizado.place(x="35", y="100")
     
+    boton_mapeado = tk.Button(root, text="Mapeado", command=lambda: configurar_eleccion("mapeado"))
+    boton_mapeado.config(cursor="hand2", bg="goldenrod", relief="flat", width=12, height=1, font=("Calisto MT", 12, "bold"))
+    boton_mapeado.place(x="35", y="145")
     root.mainloop()
 
 if __name__ == "__main__":
