@@ -271,7 +271,7 @@ def main():
         
         random_consejos = random.choice(consejos)
 
-        instrucciones = f"INSTRUCCIONES: \n\n 1. Click izquierdo sobre una casilla gris para expandir tablero \n 2. Click derecho para colocar una bandera (sin confirmar) \n 3. Click derecho sobre una bandera sin confirmar para retirarla \n 4. Click izquierdo sobre una bandera sin confirmar para confirmarla (anclado)\n\n Consejo: {random_consejos} "
+        instrucciones = f"\nINSTRUCCIONES: \n\n 1. Click izquierdo sobre una casilla gris para expandir tablero \n 2. Click derecho para colocar una bandera (sin confirmar) \n 3. Click derecho sobre una bandera sin confirmar para retirarla \n 4. Click izquierdo sobre una bandera sin confirmar para confirmarla (anclado)\n\n Consejo: {random_consejos} "
         tk.Label(ventana_instrucciones, text=instrucciones).pack()
 
 
