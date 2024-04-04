@@ -9,6 +9,7 @@ class Buscaminas:
         self.ventana = ventana
         self.rows = rows
         self.cols = cols
+        self.motivo_final = ""    
         self.banderas = banderas
         self.nbombas = nbombas
         self.buttons = {}
@@ -65,29 +66,40 @@ class Buscaminas:
 
 
     def verificar_bomba(self, row, col):
-        
         if self.buttons[(row, col)]['text'] == '🏴?':
+            if (row, col) in self.bombas:
+                self.buttons[(row, col)]['text'] = '🏴'
+            else:
+                self.buttons[(row, col)]['text'] = '🏴'
+                self.estado = False
+                for position, button in self.buttons.items():
+                    if position in self.bombas:
+                        button.config(text='💣', bg="tomato")
+                self.motivo_final = "Has perdido\n\n¡ Has anclado una bandera donde no había mina !"
+        elif self.buttons[(row, col)]['text'] == '🏴':
             return "break"
         elif (row, col) in self.bombas:
             self.estado = False
+            self.motivo_final = "Has perdido\n\n¡ Has pisado una mina !"
+            self.resultado = "Has perdido"
             for position, button in self.buttons.items():
                 if position in self.bombas:
                     button.config(text='💣', bg="tomato")           
         else:
             bombas_cercanas = self.contar_bombas_cercanas(row, col)
             if bombas_cercanas == " ":
-                self.expandir_casillas_vacias(row, col)  # Aquí se invoca la función para expandir casillas
+                self.expandir_casillas_vacias(row, col) 
             else:
                 self.buttons[(row, col)].config(text=bombas_cercanas, bg="white")
             
 
-    # Función añadida para expandir las casillas vacías alrededor de una casilla sin bombas cercanas
+    
     def expandir_casillas_vacias(self, row, col):
         casillas_procesadas = set()
         cola_casillas = [(row, col)]
         while cola_casillas:
             r, c = cola_casillas.pop(0)
-            if (r, c) not in casillas_procesadas and (r, c) not in self.bombas:
+            if (r, c) not in casillas_procesadas and (r, c) not in self.bombas and self.buttons[(r, c)]['text'] != '🏴?':
                 casillas_procesadas.add((r, c))
                 bombas_cercanas = self.contar_bombas_cercanas(r, c)
                 self.buttons[(r, c)].config(text=bombas_cercanas, bg="white")
@@ -97,6 +109,9 @@ class Buscaminas:
                         for ci in range(max(0, c-1), min(self.cols, c+2)):
                             if (ri, ci) not in casillas_procesadas:
                                 cola_casillas.append((ri, ci))
+
+        
+
 
     def marcar_bomba(self, row, col):
         if self.buttons[(row, col)]['bg'] == "white":
@@ -117,20 +132,21 @@ class Buscaminas:
         self.label_banderas = tk.Label(self.ventana, text='', width=20, height=2, bg="white", fg="black")
         self.label_banderas.grid(row=self.rows, column=3, columnspan=self.cols-3)
         self.actualizar_banderas()
-        self.actualizar_tiempo()
+        self.actualizar_parametros()
 
     def actualizar_banderas(self):
-        self.label_banderas.config(text=f"Banderas restantes: {self.banderas} 🚩")
+        self.label_banderas.config(text=f"Banderas restantes: {self.banderas} 🏴")
 
-    def actualizar_tiempo(self):
-        if self.estado == True: # Se verifica si el juego aún está en curso    
+    def actualizar_parametros(self):
+        if self.estado == True:
+
             tiempo = f"Tiempo: {self.m:02d}:{self.s:02d} ⏳"
             self.label_tiempo.config(text=tiempo)
             self.s += 1
             if self.s == 60:
                 self.s = 0
                 self.m += 1
-            self.ventana.after(1000, self.actualizar_tiempo)
+            self.ventana.after(1000, self.actualizar_parametros)
             
         else:
             self.final_juego(self.s, self.m)
@@ -140,13 +156,13 @@ class Buscaminas:
         total_casillas = self.cols * self.rows
         ventana_estadisticas = tk.Toplevel()
         ventana_estadisticas.title("Estadísticas")
-        ventana_estadisticas.geometry("250x200")
-        estadisticas = f"FIN DEL JUEGO\n ¡Has perdido!\n\n{tiempo}\nTamaño del tablero: {total_casillas} casillas"
+        ventana_estadisticas.geometry("300x300")
+        estadisticas = f"FIN DEL JUEGO\n {self.motivo_final} \n\n{tiempo}\nTamaño del tablero: {total_casillas} casillas"
         tk.Label(ventana_estadisticas, text=estadisticas).pack()
 
-        # Se desactivan los botones del juego para evitar más interacciones después de finalizar el juego.
+        
         for button in self.buttons.values():
-            #button.config(state=tk.DISABLED)
+            button.config(state=tk.DISABLED)
             button.unbind('<Button-1>')
             button.unbind('<Button-3>')
 
@@ -157,6 +173,9 @@ def main():
     root = tk.Tk()
     root.title("Tablero de Buscaminas")
     root.config(bg="black")
+    
+    
+    
     def configurar_eleccion(opcion):
         #global eleccion
         eleccion = opcion
@@ -244,17 +263,33 @@ def main():
     def enviar_valores(row, col, nbombas, banderas, eleccion_mapeado):
         Buscaminas(root, row, col, nbombas, banderas, eleccion_mapeado)
 
+    def ventana_instrucciones():
+        ventana_instrucciones = tk.Toplevel()
+        ventana_instrucciones.title("Instrucciones buscaminas")
+        ventana_instrucciones.geometry("500x500")
+        consejos = ["Si anclas una bandera y no hay bomba perderás el juego", "El número dentro de las casillas indica las bombas que hay cerca", "El maximo de bombas són una tercera parte de las casillas totales"]
+        
+        random_consejos = random.choice(consejos)
+
+        instrucciones = f"INSTRUCCIONES: \n\n 1. Click izquierdo sobre una casilla gris para expandir tablero \n 2. Click derecho para colocar una bandera (sin confirmar) \n 3. Click derecho sobre una bandera sin confirmar para retirarla \n 4. Click izquierdo sobre una bandera sin confirmar para confirmarla (anclado)\n\n Consejo: {random_consejos} "
+        tk.Label(ventana_instrucciones, text=instrucciones).pack()
+
+
     boton_facil = tk.Button(root, text="Fácil", command=lambda: configurar_eleccion("facil"))
     boton_facil.config(cursor="hand2", bg="goldenrod", relief="flat", width=8, height=1, font=("Calisto MT", 12, "bold"))
-    boton_facil.place(x="55", y="55")
+    boton_facil.place(x="55", y="10")
 
     boton_personalizado = tk.Button(root, text="Personalizado", command=lambda: configurar_eleccion("personalizado"))
     boton_personalizado.config(cursor="hand2", bg="goldenrod", relief="flat", width=12, height=1, font=("Calisto MT", 12, "bold"))
-    boton_personalizado.place(x="35", y="100")
+    boton_personalizado.place(x="35", y="55")
     
     boton_mapeado = tk.Button(root, text="Mapeado", command=lambda: configurar_eleccion("mapeado"))
     boton_mapeado.config(cursor="hand2", bg="goldenrod", relief="flat", width=12, height=1, font=("Calisto MT", 12, "bold"))
-    boton_mapeado.place(x="35", y="145")
+    boton_mapeado.place(x="35", y="100")
+
+    boton_instrucciones = tk.Button(root, text="Instrucciones", command=lambda: ventana_instrucciones())
+    boton_instrucciones.config(cursor="hand2", bg="goldenrod", relief="flat", width=12, height=1, font=("Calisto MT", 12, "bold"))
+    boton_instrucciones.place(x="35", y="145")
     root.mainloop()
 
 if __name__ == "__main__":
