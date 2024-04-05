@@ -15,8 +15,8 @@ class Buscaminas:
         self.buttons = {}
         self.bombas = set()
         self.estado = True
-        self.contador()
         self.widgets()
+        self.contador()
         self.mapeado()
         
 
@@ -102,7 +102,7 @@ class Buscaminas:
                     for ri in range(max(0, r-1), min(self.rows, r+2)):
                         for ci in range(max(0, c-1), min(self.cols, c+2)):
                             if (ri, ci) not in casillas_procesadas:
-                                cola_casillas.append((ri, ci))        
+                                cola_casillas.append((ri, ci))
 
     def marcar_bomba(self, row, col):
         if self.buttons[(row, col)]['bg'] == "white":
@@ -129,10 +129,17 @@ class Buscaminas:
         self.label_banderas.config(text=f"Banderas restantes: {self.banderas} 🏴")
 
     def actualizar_parametros(self):
-        total_validas = (self.rows * self.cols) - len(self.bombas)
+        blancas = 0
+        for i in range(self.rows):
+            for j in range(self.cols):
+                if self.buttons[(i, j)]['bg'] == 'white':
+                    blancas = blancas + 1
+        
+        total_validas = (self.rows * self.cols) - self.nbombas
+        print(blancas, total_validas, self.nbombas)
         if self.estado == True:
-            if self.casillas_desbloqueadas == total_validas:
-                self.motivo_final = ("Has ganado\n\n¡ Has completado todo el tablero de manera correcta ! ")
+            if blancas == total_validas:
+                self.motivo_final = ("Felicidades has ganado\n\n¡ Has completado todo el tablero de manera correcta ! ")
                 self.estado = False
             tiempo = f"Tiempo: {self.m:02d}:{self.s:02d} ⏳"
             self.label_tiempo.config(text=tiempo)
