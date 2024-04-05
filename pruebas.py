@@ -136,7 +136,7 @@ class Buscaminas:
                     blancas = blancas + 1
         
         total_validas = (self.rows * self.cols) - self.nbombas
-        print(blancas, total_validas, self.nbombas)
+        print(f"Desbloqueadas: {blancas} | Max validas: {total_validas} | Bombas: {self.nbombas}")
         if self.estado == True:
             if blancas == total_validas:
                 self.motivo_final = ("Felicidades has ganado\n\n¡ Has completado todo el tablero de manera correcta ! ")
