@@ -138,8 +138,11 @@ class Buscaminas:
         self.label_banderas.config(text=f"Banderas restantes: {self.banderas} 🏴")
 
     def actualizar_parametros(self):
+        total_validas = (self.rows * self.cols) - self.nbombas
         if self.estado == True:
-
+            if self.casillas_desbloqueadas == total_validas:
+                self.motivo_final = ("Has ganado\n\n¡ Has completado todo el tablero de manera correcta ! ")
+                self.estado = False
             tiempo = f"Tiempo: {self.m:02d}:{self.s:02d} ⏳"
             self.label_tiempo.config(text=tiempo)
             self.s += 1
@@ -159,7 +162,6 @@ class Buscaminas:
         ventana_estadisticas.geometry("300x300")
         estadisticas = f"FIN DEL JUEGO\n {self.motivo_final} \n\n{tiempo}\nTamaño del tablero: {total_casillas} casillas"
         tk.Label(ventana_estadisticas, text=estadisticas).pack()
-
         
         for button in self.buttons.values():
             button.config(state=tk.DISABLED)
