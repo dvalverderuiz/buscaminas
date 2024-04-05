@@ -61,10 +61,6 @@ class Buscaminas:
                     count += 1
         return " " if count == 0 else count
 
-  
-                        
-
-
     def verificar_bomba(self, row, col):
         if self.buttons[(row, col)]['text'] == '🏴?':
             if (row, col) in self.bombas:
@@ -84,15 +80,13 @@ class Buscaminas:
             self.resultado = "Has perdido"
             for position, button in self.buttons.items():
                 if position in self.bombas:
-                    button.config(text='💣', bg="tomato")           
+                    button.config(text='💣', bg="tomato")
         else:
             bombas_cercanas = self.contar_bombas_cercanas(row, col)
             if bombas_cercanas == " ":
-                self.expandir_casillas_vacias(row, col) 
+                self.expandir_casillas_vacias(row, col)
             else:
                 self.buttons[(row, col)].config(text=bombas_cercanas, bg="white")
-            
-
     
     def expandir_casillas_vacias(self, row, col):
         casillas_procesadas = set()
@@ -108,10 +102,7 @@ class Buscaminas:
                     for ri in range(max(0, r-1), min(self.rows, r+2)):
                         for ci in range(max(0, c-1), min(self.cols, c+2)):
                             if (ri, ci) not in casillas_procesadas:
-                                cola_casillas.append((ri, ci))
-
-        
-
+                                cola_casillas.append((ri, ci))        
 
     def marcar_bomba(self, row, col):
         if self.buttons[(row, col)]['bg'] == "white":
@@ -138,7 +129,7 @@ class Buscaminas:
         self.label_banderas.config(text=f"Banderas restantes: {self.banderas} 🏴")
 
     def actualizar_parametros(self):
-        total_validas = (self.rows * self.cols) - self.nbombas
+        total_validas = (self.rows * self.cols) - len(self.bombas)
         if self.estado == True:
             if self.casillas_desbloqueadas == total_validas:
                 self.motivo_final = ("Has ganado\n\n¡ Has completado todo el tablero de manera correcta ! ")
@@ -150,7 +141,6 @@ class Buscaminas:
                 self.s = 0
                 self.m += 1
             self.ventana.after(1000, self.actualizar_parametros)
-            
         else:
             self.final_juego(self.s, self.m)
 
@@ -176,12 +166,6 @@ def main():
     root.title("Tablero de Buscaminas")
     root.config(bg="black")
     
-    
-    
-    def configurar_eleccion(opcion):
-        #global eleccion
-        eleccion = opcion
-        verificar_nivel(eleccion)
     def verificar_nivel(eleccion):
         if eleccion == "facil":
             row = 10
@@ -277,15 +261,15 @@ def main():
         tk.Label(ventana_instrucciones, text=instrucciones).pack()
 
 
-    boton_facil = tk.Button(root, text="Fácil", command=lambda: configurar_eleccion("facil"))
+    boton_facil = tk.Button(root, text="Fácil", command=lambda: verificar_nivel("facil"))
     boton_facil.config(cursor="hand2", bg="goldenrod", relief="flat", width=8, height=1, font=("Calisto MT", 12, "bold"))
     boton_facil.place(x="55", y="10")
 
-    boton_personalizado = tk.Button(root, text="Personalizado", command=lambda: configurar_eleccion("personalizado"))
+    boton_personalizado = tk.Button(root, text="Personalizado", command=lambda: verificar_nivel("personalizado"))
     boton_personalizado.config(cursor="hand2", bg="goldenrod", relief="flat", width=12, height=1, font=("Calisto MT", 12, "bold"))
     boton_personalizado.place(x="35", y="55")
     
-    boton_mapeado = tk.Button(root, text="Mapeado", command=lambda: configurar_eleccion("mapeado"))
+    boton_mapeado = tk.Button(root, text="Mapeado", command=lambda: verificar_nivel("mapeado"))
     boton_mapeado.config(cursor="hand2", bg="goldenrod", relief="flat", width=12, height=1, font=("Calisto MT", 12, "bold"))
     boton_mapeado.place(x="35", y="100")
 
