@@ -134,9 +134,9 @@ class Buscaminas:
             for j in range(self.cols):
                 if self.buttons[(i, j)]['bg'] == 'white':
                     blancas = blancas + 1
-        
         total_validas = (self.rows * self.cols) - self.nbombas
-        print(f"Desbloqueadas: {blancas} | Max validas: {total_validas} | Bombas: {self.nbombas}")
+        print(f"Desbloqueadas: {blancas} | Objetivo: {total_validas} | Bombas: {self.nbombas} | Total casillas: {self.rows * self.cols}")
+        
         if self.estado == True:
             if blancas == total_validas:
                 self.motivo_final = ("Felicidades has ganado\n\n¡ Has completado todo el tablero de manera correcta ! ")
