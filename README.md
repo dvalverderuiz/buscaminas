@@ -1,4 +1,4 @@
-# read me buscaminas
+# README buscaminas
 
 **PROYECTO BUSCAMINAS - David Valverde | Miquel Burguera**
 
